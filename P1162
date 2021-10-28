@@ -1,0 +1,105 @@
+import java.io.*;
+import java.util.*;
+
+public class P1162 {
+    static int n;
+    static int[][] matrix;
+    static final int[][] dir = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
+
+    static void BFSFill(int x, int y){
+        Queue<point> q = new LinkedList<>();
+
+
+        q.offer(new point(x, y));
+
+
+        while (q.size()>0){
+            point cur = q.poll();
+
+            for (int i=0; i<4; i++){
+                int nx = cur.x+dir[i][0];
+                int ny = cur.y+dir[i][1];
+
+                if (nx<0 || nx>=n || ny<0 || ny>=n) continue;
+
+                if (matrix[nx][ny]==0){
+                    q.offer(new point(nx, ny));
+                    matrix[nx][ny] = 2;
+
+                }
+            }
+        }
+
+
+    }
+
+    static boolean BFSCheck(int x, int y){
+        Queue<point> q = new LinkedList<>();
+
+        boolean[][] visited = new boolean[n][n];
+        q.offer(new point(x, y));
+        visited[x][y] = true;
+
+        while (q.size()>0){
+            point cur = q.poll();
+
+            for (int i=0; i<4; i++){
+                int nx = cur.x+dir[i][0];
+                int ny = cur.y+dir[i][1];
+
+                if (nx<0 || nx>=n || ny<0 || ny>=n) continue;
+
+                if (matrix[nx][ny]==0 && !visited[nx][ny]){
+                    q.offer(new point(nx, ny));
+                    visited[nx][ny] = true;
+                    if (nx==0 ||nx==n-1 || ny==0 || ny==n-1) return false;
+                }
+
+            }
+        }
+
+        return true;
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        n = Integer.parseInt(bf.readLine());
+        matrix = new int[n][n];
+
+
+        for (int i=0; i<n; i++){
+            StringTokenizer st= new StringTokenizer(bf.readLine());
+            for (int j=0; j<n; j++){
+                matrix[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+
+        lol: for (int i=1; i<n-1; i++){
+            for (int j=1; j<n-1; j++){
+                if (matrix[i][j]!=1&& BFSCheck(i, j)) {
+                    BFSFill(i, j);
+                    break lol;
+                }
+            }
+        }
+
+        for (int[] i: matrix){
+            for (int j: i){
+                System.out.print(j+" ");
+            }
+            System.out.println();
+        }
+
+
+
+    }
+
+    static class point{
+        int x, y;
+
+        public point(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+    }
+}
