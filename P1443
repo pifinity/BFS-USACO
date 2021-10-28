@@ -1,0 +1,68 @@
+import java.io.*;
+import java.util.*;
+
+class P1443 {
+    static int n, m, x, y;
+    static int[][] dir ={ { -2, 1 }, { -2, -1 }, { 2, -1 }, { 2, 1 }, {1, 2}, {-1, 2}, {-1, -2}, {1, -2} };
+    static int[][] board;
+    public static void main(String[] args){
+        Scanner sc= new Scanner(System.in);
+        n = sc.nextInt();
+        m = sc.nextInt();
+        x = sc.nextInt()-1;
+        y = sc.nextInt()-1;
+        board = new int[n][m];
+        for (int[] i : board){
+            Arrays.fill(i, -1);
+        }
+
+        board[x][y] = 0;
+        bfs(x, y);
+
+        for (int i=0; i<n; i++){
+            for (int j=0; j<m; j++){
+                System.out.printf("%-5d", board[i][j]);
+            }
+            System.out.println();
+        }
+
+
+
+
+
+
+    }
+
+    static void bfs(int x, int y){
+        Queue<point> q = new LinkedList<>();
+        q.add(new point(x, y, 0));
+
+        while (q.size()>0){
+            point cur = q.poll();
+            board[cur.x][cur.y] = cur.step;
+            for (int i=0; i<8; i++){
+                int nx = cur.x+dir[i][0];
+                int ny = cur.y+dir[i][1];
+
+
+                if (nx<0 || nx>=n || ny<0 || ny>=m) continue;
+
+                if (board[nx][ny]==-1){
+                    q.offer(new point(nx, ny, cur.step+1));
+
+                }
+            }
+        }
+
+    }
+
+    static class point{
+        int x, y, step;
+
+        public point(int x, int y, int step){
+            this.x = x;
+            this.y = y;
+            this.step = step;
+        }
+    }
+}
