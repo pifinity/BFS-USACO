@@ -1,0 +1,145 @@
+import java.io.*;
+import java.util.*;
+
+public class lightson {
+
+    static int m, n;
+    static ArrayList<pair>[][] switches;
+    static boolean[][] isLighted;
+    static boolean[][] visited;
+    static int[][] dir = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+
+    public static void main(String[] args) throws Exception {
+
+        BufferedReader br = new BufferedReader(new FileReader("lightson.in"));
+        PrintWriter out = new PrintWriter("lightson.out");
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
+        isLighted = new boolean[n][n];
+        visited = new boolean[n][n];
+        switches = new ArrayList[n][n];
+
+
+
+        for (int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                switches[i][j] = new ArrayList<pair>();
+            }
+        }
+
+        for (int i=0; i<m; i++){
+            st = new StringTokenizer(br.readLine());
+            int a= Integer.parseInt(st.nextToken())-1;
+            int b= Integer.parseInt(st.nextToken())-1;
+            int c= Integer.parseInt(st.nextToken())-1;
+            int d= Integer.parseInt(st.nextToken())-1;
+
+
+
+            switches[a][b].add(new pair(c, d));
+        }
+
+
+        isLighted[0][0] = true;
+        dfs(0, 0);
+
+        int count = 0;
+
+        for (boolean[] i: isLighted){
+            for (boolean j: i){
+                if (j) count++;
+            }
+        }
+
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = 0; j < n; j++)
+            {
+                System.out.print(visited[i][j]+" ");
+            }
+            System.out.println();
+        }
+
+        System.out.println();
+        for(int i = 0; i < n; i++)
+        {
+            for(int j = 0; j < n; j++)
+            {
+                System.out.print(isLighted[i][j]+" ");
+            }
+            System.out.println();
+        }
+        out.println(count);
+        out.close();
+
+
+       // switches[1][2].add(new pair(1,2));
+
+      //  System.out.println(switches[1][2].get(0));
+
+
+
+
+    }
+    public static boolean isOn(int x, int y) {
+        return x >= 0 && x < n && y >= 0 && y < n && isLighted[x][y];
+    }
+
+    public static boolean isVisited(int x, int y) {
+        return x >= 0 && x < visited.length && y >= 0 && y < visited[x].length && visited[x][y];
+    }
+
+    public static boolean hasVisitedNeighbor(int x, int y) {
+        for(int k = 0; k < dir.length; k++) {
+            if(isOn(x + dir[k][0], y + dir[k][1]) && isVisited(x + dir[k][0], y + dir[k][1])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    static void dfs(int x, int y){
+        if (visited[x][y]) return;
+        visited[x][y] = true;
+        for (pair i: switches[x][y]){
+            int nx = i.x;
+            int ny = i.y;
+            if (!isLighted[nx][ny]) {
+                isLighted[nx][ny] = true;
+
+
+                if (hasVisitedNeighbor(nx, ny)){
+                    dfs(nx, ny);
+                }
+            }
+        }
+
+        for (int i=0; i<4; i++){
+            int nx = x+dir[i][0];
+            int ny = y+dir[i][1];
+            if (isOn(nx, ny)){
+
+                dfs(nx, ny);
+            }
+
+        }
+    }
+
+
+
+    static public class pair{
+        int x, y;
+
+        public pair(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+        public String toString(){
+            return x+" "+y;
+        }
+    }
+}
